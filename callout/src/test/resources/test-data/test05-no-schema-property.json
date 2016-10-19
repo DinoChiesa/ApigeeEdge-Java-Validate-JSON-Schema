@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "debug" : "false"
+  },
+  "context" : {
+    "my_schema" : "file://schema-01.json",
+    "message.content" : "file://payload-01-shipping-includes-type.json"
+  },
+  "expected" : {
+    "result": "abort",
+    "error" : "schema is not specified"
+  }
+}

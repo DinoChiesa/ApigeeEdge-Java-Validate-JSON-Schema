@@ -1,0 +1,16 @@
+{
+  "properties" : {
+    "debug" : "false",
+    "suppress-fault" : "true",
+    "schema" : "{my_schema}"
+  },
+  "context" : {
+    "my_schema" : "file://schema-01.json",
+    "message.content" : "file://payload-02-shipping-no-type.json"
+  },
+  "expected" : {
+    "result": "success",
+    "valid" : false,
+    "error" : "invalid message"
+  }
+}

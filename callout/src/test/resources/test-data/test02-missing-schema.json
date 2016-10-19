@@ -1,0 +1,14 @@
+{
+  "properties" : {
+    "debug" : "false",
+    "schema" : "{missing_schema}"
+  },
+  "context" : {
+    "my_schema" : "file://schema-01.json",
+    "message.content" : "file://payload-01-shipping-includes-type.json"
+  },
+  "expected" : {
+    "result": "abort",
+    "error" : "schema resolves to an empty string"
+  }
+}
