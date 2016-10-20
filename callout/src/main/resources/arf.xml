@@ -1,6 +1,0 @@
-<Flow name="Flow-1">
-  <Description/>
-  <Request/>
-  <Response/>
-   <Condition>(proxy.pathsuffix MatchesPath "/^[0-9]+%condition%quot;) and (request.verb = "GET")</Condition>
-</Flow>
