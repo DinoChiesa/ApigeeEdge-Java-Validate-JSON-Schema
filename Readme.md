@@ -116,17 +116,18 @@ The named schema must exist in the edge-custom-json-schema-validator.jar.
 It should be in the resources directory.  The content of the jar
 should look like this: 
 
-        meta-inf/                                       
-        meta-inf/manifest.mf                            
-        com/                                            
-        com/dinochiesa
-        com/dinochiesa/edgecallouts
-        com/dinochiesa/edgecallouts/jsonschema/                      
-        com/dinochiesa/edgecallouts/jsonschema/ValidatorCallout.class
-        resources/                                      
-        resources/schema1.json                          
+        meta-inf/ 
+        meta-inf/manifest.mf 
+        com/ 
+        com/dinochiesa 
+        com/dinochiesa/edgecallouts 
+        com/dinochiesa/edgecallouts/jsonschema/
+        com/dinochiesa/edgecallouts/jsonschema/ValidatorCallout.class 
+        resources/
+        resources/schema1.json 
 
-You can just drop schema files into the [resourcese](src/main/resources) directory and rebuild with maven, to make this happen. 
+You can just drop schema files into the [resources](src/main/resources)
+directory and rebuild with maven, to make this happen.
 
 
 ### Schema in a Variable that refers to a Resource file
