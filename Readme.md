@@ -68,7 +68,7 @@ The first is to specify the schema directly in the policy configuration, like th
   </Properties>
 
   <ClassName>com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://JsonSchemaValidatorCallout.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -83,7 +83,7 @@ has a JSON schema string in it.
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://JsonSchemaValidatorCallout.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -105,15 +105,15 @@ file. You can specify the schema file name this way:
     <Property name='schema'>schema1.json</Property>
   </Properties>
   <ClassName>com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://JsonSchemaValidatorCallout.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator.jar</ResourceURL>
 </JavaCallout>
 ```
 
 This requires that you bundle the schema file into the JAR; in other words, you must recompile the JAR. 
 
 
-The named schema must exist in the JsonSchemaValidatorCallout.jar.
-it should be in the resources directory.  The content of the jar
+The named schema must exist in the edge-custom-json-schema-validator.jar.
+It should be in the resources directory.  The content of the jar
 should look like this: 
 
         meta-inf/                                       
@@ -143,7 +143,7 @@ recognized as a schema file.  The syntax looks like this:
     <Property name='schema'>{context_var_that_contains_name_of_schema_resource}</Property>
   </Properties>
   <ClassName>com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://JsonSchemaValidatorCallout.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -165,7 +165,7 @@ You can suppress the faults by using a property in the configuration, like this:
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://JsonSchemaValidatorCallout.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator.jar</ResourceURL>
 </JavaCallout>
 ```
 
