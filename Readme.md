@@ -119,9 +119,10 @@ should look like this:
         meta-inf/                                       
         meta-inf/manifest.mf                            
         com/                                            
-        com/dinochiesa/                                 
-        com/dinochiesa/jsonschema/                      
-        com/dinochiesa/jsonschema/ValidatorCallout.class
+        com/dinochiesa
+        com/dinochiesa/edgecallouts
+        com/dinochiesa/edgecallouts/jsonschema/                      
+        com/dinochiesa/edgecallouts/jsonschema/ValidatorCallout.class
         resources/                                      
         resources/schema1.json                          
 
