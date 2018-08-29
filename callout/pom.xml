@@ -179,14 +179,16 @@ mvn install:install-file \
 
                     <!-- copy any required dependencies that are not
                          already included in the Edge runtime: -->
-
+                    <include name="lib/json-schema-validator-2.2.10.jar"/>
+                    <include name="lib/jackson-annotations-2.9.5.jar"/>
                     <include name="lib/jackson-databind-2.9.5.jar"/>
                     <include name="lib/jackson-core-2.9.5.jar"/>
                     <include name="lib/json-schema-core-1.2.10.jar"/>
                     <include name="lib/jackson-coreutils-1.9.jar"/>
                     <include name="lib/commons-lang-2.6.jar"/>
                     <include name="lib/libphonenumber-8.0.0.jar"/>
-
+                    <include name="lib/uri-template-0.9.jar"/>
+                    <include name="lib/msg-simple-1.1.jar"/>
                     <!--                    -->
 
                   </fileset>
