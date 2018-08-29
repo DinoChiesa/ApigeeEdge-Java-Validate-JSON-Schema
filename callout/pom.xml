@@ -3,28 +3,31 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.apigee.callout</groupId>
+  <groupId>com.google.apigee.callout</groupId>
   <artifactId>edge-custom-json-schema-validator</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.1</version>
   <name>EdgeCustomJsonSchemaValidator</name>
   <url>http://maven.apache.org</url>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.7</java.version>
-    <apiproxy.java.rsrc.dir>../bundle/apiproxy/resources/java</apiproxy.java.rsrc.dir>
+    <java.version>1.8</java.version>
     <testng.version>6.8.7</testng.version> <!-- current: 6.9.4 -->
     <jmockit.version>1.7</jmockit.version>
+    <jackson.version>2.9.5</jackson.version>
+    <apiproxy.java.rsrc.dir>../bundle/apiproxy/resources/java</apiproxy.java.rsrc.dir>
   </properties>
 
   <dependencies>
+<!--
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.3.5</version>
       <scope>compile</scope>
     </dependency>
+-->
 
     <dependency>
       <groupId>commons-lang</groupId>
@@ -74,45 +77,27 @@ mvn install:install-file \
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.3.3</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.3.3</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.3.3</version>
+      <version>${jackson.version}</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/com.github.java-json-tools/json-schema-validator -->
     <dependency>
-      <groupId>com.github.fge</groupId>
-      <artifactId>jackson-coreutils</artifactId>
-      <version>1.8</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.fge</groupId>
+      <groupId>com.github.java-json-tools</groupId>
       <artifactId>json-schema-validator</artifactId>
-      <version>2.2.6</version>
+      <version>2.2.10</version>
     </dependency>
-
-    <dependency>
-      <groupId>com.github.fge</groupId>
-      <artifactId>msg-simple</artifactId>
-      <version>1.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.fge</groupId>
-      <artifactId>json-schema-core</artifactId>
-      <version>1.2.5</version>
-    </dependency>
-
 
     <dependency>
       <groupId>commons-io</groupId>
@@ -120,7 +105,6 @@ mvn install:install-file \
       <version>2.5</version>
       <scope>test</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -132,13 +116,13 @@ mvn install:install-file \
     <dependency>
       <groupId>com.googlecode.jmockit</groupId>
       <artifactId>jmockit</artifactId>
-      <version>1.7</version>
+      <version>${jmockit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -163,7 +147,7 @@ mvn install:install-file \
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.7.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -173,23 +157,13 @@ mvn install:install-file \
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.6</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-
+        <version>3.0.2</version>
         <configuration>
           <archive>
             <!-- do not include the pom.xml file in the generated jar -->
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
         </configuration>
-
       </plugin>
 
       <plugin>
@@ -201,9 +175,17 @@ mvn install:install-file \
               <tasks>
                 <copy todir="${apiproxy.java.rsrc.dir}">
                   <fileset dir="${project.build.directory}">
-                    <include name="${project.artifactId}.jar"/>
-                    <!-- copy any required dependencies tht are not
+                    <include name="${project.artifactId}-${project.version}.jar"/>
+
+                    <!-- copy any required dependencies that are not
                          already included in the Edge runtime: -->
+
+                    <include name="lib/jackson-databind-2.9.5.jar"/>
+                    <include name="lib/jackson-core-2.9.5.jar"/>
+                    <include name="lib/json-schema-core-1.2.10.jar"/>
+                    <include name="lib/jackson-coreutils-1.9.jar"/>
+                    <include name="lib/commons-lang-2.6.jar"/>
+                    <include name="lib/libphonenumber-8.0.0.jar"/>
 
                     <!--                    -->
 

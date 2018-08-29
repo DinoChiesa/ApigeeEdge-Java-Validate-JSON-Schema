@@ -12,7 +12,7 @@ recompile the code, for whatever reason, you can do so.
 
 ## License
 
-This material is copyright 2015, 2016 Apigee Corporation, 
+This material is Copyright 2015, 2016 Apigee Corporation, Copyright 2018 Google LLC
 and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java code as well as the API Proxy configuration. 
 
 
@@ -23,7 +23,10 @@ be configured to run in any flow. A typical use is that you would
 configure a Java callout with this JSON Schema Validator class in it, to
 run on the request flow, to check the inbound payload from a client. 
 
-The callout always reads from the message.content. When applied on the request flow, it reads the JSON payload from the request content. When applied on the response flow, the policy reads the JSON payload from the response content. 
+The callout always reads from the message.content. When applied on the
+request flow, it reads the JSON payload from the request content. When
+applied on the response flow, the policy reads the JSON payload from the
+response content.
 
 There are several options for configuring the class.
 

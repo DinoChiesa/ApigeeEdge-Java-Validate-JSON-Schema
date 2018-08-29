@@ -1,39 +1,40 @@
-package com.dinochiesa.edgecallouts.jsonschema.testng;
+package com.google.apigee.edgecallouts.jsonschema.testng;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.nio.file.Files;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 
-import mockit.Mock;
-import mockit.MockUp;
+
+
 
 import com.apigee.flow.execution.ExecutionContext;
 import com.apigee.flow.execution.ExecutionResult;
-import com.apigee.flow.message.MessageContext;
 import com.apigee.flow.message.Message;
-
-import com.dinochiesa.edgecallouts.jsonschema.ValidatorCallout;
-
+import com.apigee.flow.message.MessageContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.google.apigee.edgecallouts.jsonschema.ValidatorCallout;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import mockit.Mock;
+import mockit.MockUp;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 public class TestValidatorCallout {
     private final static String testDataDir = "src/test/resources/test-data";
@@ -120,6 +121,7 @@ public class TestValidatorCallout {
             throw new IllegalStateException("no test directory.");
         }
         File[] files = testDir.listFiles();
+        Arrays.sort(files);
         if (files.length == 0) {
             throw new IllegalStateException("no tests found.");
         }
