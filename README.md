@@ -90,7 +90,7 @@ has a JSON schema string in it.
 </JavaCallout>
 ```
 
-For this option, you would need to read the schema from "something". That might be an external URL, read with a ServiceCallout policy.  Or it could be read from a KVM, using a KVM-Get.  You could even use an AssignMessage. One way or the other, you need to get the schema into a context variable in Apigee Edge.
+For this option, you would need to read the schema from some other source. That might be an external URL, read with a ServiceCallout policy.  Or it could be read from a KVM, using a KVM-Get.  You could even use an AssignMessage. One way or the other, you need to get the schema into a context variable in Apigee Edge.
 
 
 ### Schema in a Resource file
@@ -122,10 +122,10 @@ should look like this:
         meta-inf/
         meta-inf/manifest.mf
         com/
-        com/dinochiesa
-        com/dinochiesa/edgecallouts
-        com/dinochiesa/edgecallouts/jsonschema/
-        com/dinochiesa/edgecallouts/jsonschema/ValidatorCallout.class
+        com/google
+        com/google/apigee/edgecallouts
+        com/google/apigee/edgecallouts/jsonschema/
+        com/google/apigee/edgecallouts/jsonschema/ValidatorCallout.class
         resources/
         resources/schema1.json
 
@@ -176,9 +176,9 @@ You can suppress the faults by using a property in the configuration, like this:
 
 Whether or not the policy throws a fault, the policy sets these variables:
 
-|| variable name || meaning ||
-|:---------------||:----------------------------------||
-| jsv_valid      | true if the JSON message was valid. false if not. |
+| variable name  | meaning                                              |
+|:---------------|:---------------------------------------------------- |
+| jsv_valid      | true if the JSON message was valid. false if not.    |
 | jsv_error      | null if no error. a string indicating the error if the message was invalid, or if there was another error (eg, invalid configuration) |
 
 
