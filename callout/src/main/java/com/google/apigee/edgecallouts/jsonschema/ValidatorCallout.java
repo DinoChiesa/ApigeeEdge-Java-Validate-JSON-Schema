@@ -1,32 +1,41 @@
-package com.google.apigee.edgecallouts.jsonschema;
+// Copyright 2018 Google LLC.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.List;
+package com.google.apigee.edgecallouts.jsonschema;
 
 import com.apigee.flow.execution.ExecutionContext;
 import com.apigee.flow.execution.ExecutionResult;
 import com.apigee.flow.execution.IOIntensive;
 import com.apigee.flow.execution.spi.Execution;
-import com.apigee.flow.message.MessageContext;
 import com.apigee.flow.message.Message;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.apigee.flow.message.MessageContext;
 import com.fasterxml.jackson.databind.JsonNode;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 @IOIntensive
-
 public class ValidatorCallout implements Execution {
-
     private static String _varPrefix = "jsv_";
     private static final String varName(String s) { return _varPrefix + s; }
 
@@ -43,9 +52,9 @@ public class ValidatorCallout implements Execution {
 
     private boolean getSuppressFault(MessageContext msgCtxt) {
         String suppressFault = (String) this.properties.get("suppress-fault");
-        if (StringUtils.isBlank(suppressFault)) { return false; }
+        if (Strings.isNullOrEmpty(suppressFault)) { return false; }
         suppressFault = resolvePropertyValue(suppressFault, msgCtxt);
-        if (StringUtils.isBlank(suppressFault)) { return false; }
+        if (Strings.isNullOrEmpty(suppressFault)) { return false; }
         return suppressFault.toLowerCase().equals("true");
     }
 
@@ -147,7 +156,7 @@ public class ValidatorCallout implements Execution {
         }
         catch (Exception e) {
             if (getDebug()) {
-                System.out.println(ExceptionUtils.getStackTrace(e));
+                System.out.println(Throwables.getStackTraceAsString(e));
             }
             String error = e.toString();
             msgCtxt.setVariable(varName("exception"), error);
@@ -158,7 +167,7 @@ public class ValidatorCallout implements Execution {
             else {
                 msgCtxt.setVariable(varName("error"), error);
             }
-            msgCtxt.setVariable(varName("stacktrace"), ExceptionUtils.getStackTrace(e));
+            msgCtxt.setVariable(varName("stacktrace"), Throwables.getStackTraceAsString(e));
             msgCtxt.setVariable(varName("success"), false);
 
             if (getSuppressFault(msgCtxt)) return ExecutionResult.SUCCESS;

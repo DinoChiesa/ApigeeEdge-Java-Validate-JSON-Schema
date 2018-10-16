@@ -1,0 +1,11 @@
+<AssignMessage name='AM-Response'>
+  <Set>
+    <Payload contentType='application/json'>{
+    "status" : "ok",
+    "error" : "{jsv_error}",
+    "valid" : {jsv_valid}
+}</Payload>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew='false' transport='http' type='response'/>
+</AssignMessage>

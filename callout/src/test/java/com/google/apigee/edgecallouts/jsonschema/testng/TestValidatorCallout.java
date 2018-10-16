@@ -1,10 +1,5 @@
 package com.google.apigee.edgecallouts.jsonschema.testng;
 
-
-
-
-
-
 import com.apigee.flow.execution.ExecutionContext;
 import com.apigee.flow.execution.ExecutionResult;
 import com.apigee.flow.message.Message;
@@ -13,6 +8,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.apigee.edgecallouts.jsonschema.ValidatorCallout;
+import com.google.common.base.Strings;
+import com.google.common.io.CharSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import mockit.Mock;
 import mockit.MockUp;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -49,54 +44,54 @@ public class TestValidatorCallout {
         messageContent = null;
 
         msgCtxt = new MockUp<MessageContext>() {
-            private Map variables;
-            public void $init() {
-                variables = new HashMap();
-            }
-
-            @Mock()
-            public <T> T getVariable(final String name){
-                if (variables == null) {
+                private Map variables;
+                public void $init() {
                     variables = new HashMap();
                 }
-                return (T) variables.get(name);
-            }
 
-            @Mock()
-            public boolean setVariable(final String name, final Object value) {
-                if (variables == null) {
-                    variables = new HashMap();
+                @Mock()
+                public <T> T getVariable(final String name){
+                    if (variables == null) {
+                        variables = new HashMap();
+                    }
+                    return (T) variables.get(name);
                 }
-                variables.put(name, value);
-                return true;
-            }
 
-            @Mock()
-            public boolean removeVariable(final String name) {
-                if (variables == null) {
-                    variables = new HashMap();
+                @Mock()
+                public boolean setVariable(final String name, final Object value) {
+                    if (variables == null) {
+                        variables = new HashMap();
+                    }
+                    variables.put(name, value);
+                    return true;
                 }
-                if (variables.containsKey(name)) {
-                    variables.remove(name);
-                }
-                return true;
-            }
 
-            @Mock()
-            public Message getMessage() {
-                return message;
-            }
-        }.getMockInstance();
+                @Mock()
+                public boolean removeVariable(final String name) {
+                    if (variables == null) {
+                        variables = new HashMap();
+                    }
+                    if (variables.containsKey(name)) {
+                        variables.remove(name);
+                    }
+                    return true;
+                }
+
+                @Mock()
+                public Message getMessage() {
+                    return message;
+                }
+            }.getMockInstance();
 
         exeCtxt = new MockUp<ExecutionContext>(){ }.getMockInstance();
 
         message = new MockUp<Message>(){
-            @Mock()
-            public InputStream getContentAsStream() {
-                if (messageContent == null){ return new ByteArrayInputStream(new byte[0]); }
-                return new ByteArrayInputStream(messageContent.getBytes(StandardCharsets.UTF_8));
-            }
-        }.getMockInstance();
+                @Mock()
+                public InputStream getContentAsStream() {
+                    if (messageContent == null){ return new ByteArrayInputStream(new byte[0]); }
+                    return new ByteArrayInputStream(messageContent.getBytes(StandardCharsets.UTF_8));
+                }
+            }.getMockInstance();
     }
 
     @DataProvider(name = "batch1")
@@ -135,7 +130,7 @@ public class TestValidatorCallout {
                 if (tc.getExpected()==null) {
                     throw new Exception("invalid test case");
                 }
-                if (StringUtils.isEmpty(tc.getDescription())) { tc.setDescription("-no description-"); }
+                if (Strings.isNullOrEmpty(tc.getDescription())) { tc.setDescription("-no description-"); }
                 for (String key : tc.getContext().keySet()) {
                     String value = tc.getContext().get(key);
                     if (value.startsWith("file://")) {
@@ -144,9 +139,10 @@ public class TestValidatorCallout {
                         if (!Files.exists(path)) {
                             throw new IOException("file("+name+") for context("+ key +") not found");
                         }
-                        InputStream in = Files.newInputStream(path);
+
                         // replace the content with what is read from the file
-                        tc.getContext().put(key,IOUtils.toString(in,StandardCharsets.UTF_8));
+                        CharSource source = com.google.common.io.Files.asCharSource(path.toFile(), StandardCharsets.UTF_8);
+                        tc.getContext().put(key, source.read());
                     }
                 }
                 list.add(tc);
@@ -167,13 +163,18 @@ public class TestValidatorCallout {
         Assert.assertTrue(getDataForBatch1().length > 0);
     }
 
+    private void reportResult(TestCase tc, boolean isFailed, String actual, String expected) {
+        System.err.printf("%s %-48s  %s\n", isFailed ?"FAIL": "PASS", tc.getTestName(), tc.getDescription());
+        if (isFailed){
+            System.err.printf("    got: %s\n", actual);
+            System.err.printf("    expected: %s\n", expected);
+        }
+        Assert.assertEquals(actual, expected, "result not as expected");
+        System.out.println("=====================================================================");
+    }
+
     @Test(dataProvider = "batch1")
     public void test2_Configs(TestCase tc) {
-        // if (tc.getDescription()!= null)
-        //     System.out.printf("  %10s - %s\n", tc.getTestName(), tc.getDescription() );
-        // else
-        //     System.out.printf("  %10s\n", tc.getTestName() );
-
         ValidatorCallout callout = new ValidatorCallout(tc.getProperties());  // properties
         for (String key : tc.getContext().keySet()) {
             msgCtxt.setVariable(key,tc.getContext().get(key));
@@ -190,61 +191,36 @@ public class TestValidatorCallout {
             ExecutionResult.SUCCESS : ExecutionResult.ABORT;
 
         // check result and output
-        if (expectedResult != actualResult) {
-            System.err.printf("  FAIL %10s - %s\n", tc.getTestName(), tc.getDescription());
-            System.err.printf("    got: %s\n", actualResult);
-            System.err.printf("    expected: %s\n", expectedResult);
-            // the following will throw
-            Assert.assertEquals(actualResult, expectedResult, "result not as expected");
+        boolean isFailed = (expectedResult != actualResult);
+        if (isFailed) {
+            reportResult(tc, isFailed, actualResult.toString(), expectedResult.toString());
+            return;
         }
-        else if (expectedResult == ExecutionResult.ABORT) {
-            String expectedError = (String) tc.getExpected().get("error");
-            Assert.assertTrue(StringUtils.isNotEmpty(expectedError), "expected error");
-            String actualError = msgCtxt.getVariable("jsv_error");
-            if (expectedError.equals(actualError)) {
-                System.out.printf("  PASS %10s - %s\n", tc.getTestName(), tc.getDescription() );
-            }
-            else {
-                System.err.printf("  FAIL %10s - %s\n", tc.getTestName(), tc.getDescription());
-                System.err.printf("    got: (%s)\n", actualError);
-                System.err.printf("    expected: (%s)\n", expectedError);
-                // the following will throw
-                Assert.assertEquals(actualError, expectedError, "result not as expected");
-            }
-        }
-        else {
-            // completed successfully as expected.  Now let's see if it was valid
-            String expectedError = (String) tc.getExpected().get("error");
-            if (StringUtils.isNotBlank(expectedError)) {
-                String actualError = msgCtxt.getVariable("jsv_error");
-                if (expectedError.equals(actualError)) {
-                    System.out.printf("  PASS %10s - %s\n", tc.getTestName(), tc.getDescription() );
-                }
-                else {
-                    System.err.printf("  FAIL %10s - %s\n", tc.getTestName(), tc.getDescription());
-                    System.err.printf("    got: (%s)\n", actualError);
-                    System.err.printf("    expected: (%s)\n", expectedError);
-                    // the following will throw
-                    Assert.assertEquals(actualError, expectedError, "result not as expected");
-                }
 
-            }
-            else {
-                boolean expectedValid = (boolean) tc.getExpected().get("valid");
-                boolean actualValid = msgCtxt.getVariable("jsv_valid");
-                if (expectedValid == actualValid) {
-                    System.out.printf("  PASS %10s - %s\n", tc.getTestName(), tc.getDescription() );
-                }
-                else {
-                    System.err.printf("  FAIL %10s - %s\n", tc.getTestName(), tc.getDescription());
-                    System.err.printf("    got valid: (%s)\n", actualValid);
-                    System.err.printf("    expected valid: (%s)\n", expectedValid);
-                    // the following will throw
-                    Assert.assertEquals(actualValid, expectedValid, "result not as expected");
-                }
-            }
+        if (expectedResult == ExecutionResult.ABORT) {
+            String expectedError = (String) tc.getExpected().get("error");
+            Assert.assertFalse(Strings.isNullOrEmpty(expectedError), "expected error");
+            String actualError = msgCtxt.getVariable("jsv_error");
+            isFailed = !expectedError.equals(actualError);
+            reportResult(tc, isFailed, (String)actualError, (String)expectedError);
+            return;
         }
-        System.out.println("=========================================================");
+
+        // completed successfully as expected.  Now let's see if it was valid
+        String expectedError = (String) tc.getExpected().get("error");
+        if (!Strings.isNullOrEmpty(expectedError)) {
+            String actualError = msgCtxt.getVariable("jsv_error");
+            isFailed = !expectedError.equals(actualError);
+            reportResult(tc, isFailed, (String)actualError, (String)expectedError);
+            return;
+        }
+
+        boolean expectedValid = (boolean) tc.getExpected().get("valid");
+        boolean actualValid = msgCtxt.getVariable("jsv_valid");
+        isFailed = (expectedValid != actualValid);
+        reportResult(tc, isFailed,
+                     new Boolean(actualValid).toString(),
+                     new Boolean(expectedValid).toString());
     }
 
 }

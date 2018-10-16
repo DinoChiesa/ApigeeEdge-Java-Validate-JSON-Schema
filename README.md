@@ -1,34 +1,47 @@
 # Java callout - for JSON Schema Validation
 
-This directory contains the Java source code and Java jars required to
-compile a Java callout for Apigee Edge that performs JSON Schema
-validation.  It uses draft #4 of the [JSON Schema](https://tools.ietf.org/html/draft-wright-json-schema-00) standard.
-For more information on JSON Schema, see [Understanding JSON Schema](https://spacetelescope.github.io/understanding-json-schema/structuring.html).
-This Java callout relies on [the json-schema-validator library v2.2.6 from com.github.fge](https://github.com/daveclayton/json-schema-validator).
+This directory contains the Java source code and Java jars required to compile a
+Java callout for Apigee Edge that performs JSON Schema validation.  It uses
+draft #4 of the [JSON
+Schema](https://tools.ietf.org/html/draft-wright-json-schema-00) standard.  For
+more information on JSON Schema, see [Understanding JSON
+Schema](https://spacetelescope.github.io/understanding-json-schema/structuring.html).
+This Java callout relies on [the json-schema-validator library v2.2.10 from
+com.github.fge](https://github.com/daveclayton/json-schema-validator).
 
-You do not need to compile the Java code in order to use this
-callout. It's ready for you to use, as is. However, if you wish to modify and
-recompile the code, for whatever reason, you can do so.
+You do not need to compile the Java code in order to use this callout. It's
+ready for you to use, as is. However, if you wish to modify and recompile the
+code, for whatever reason, you can do so.
+
+## Disclaimer
+
+This example is not an official Google product, nor is it part of an official Google product.
 
 ## License
 
 This material is Copyright 2015, 2016 Apigee Corporation, Copyright 2018 Google LLC
 and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java code as well as the API Proxy configuration.
 
-
 ## Usage
 
 The Java JAR here can be used as a Java callout in Apigee Edge. It can
 be configured to run in any flow. A typical use is that you would
 configure a Java callout with this JSON Schema Validator class in it, to
-run on the request flow, to check the inbound payload from a client.
+run on the request flow, to check the inbound payload from a client against a schema that is attached to the proxy in some way.
 
-The callout always reads from the message.content. When applied on the
+The callout always reads the payload from the message.content. When applied on the
 request flow, it reads the JSON payload from the request content. When
 applied on the response flow, the policy reads the JSON payload from the
 response content.
 
-There are several options for configuring the class.
+There is just one configuration parameter: the schema. There are several options:
+
+- inline in the policy
+- as a variable holding a schema as a string
+- as a named schema that is compiled into the JAR
+- as a variable referencing a named schema
+
+Examples follow.
 
 ### Inline Schema
 
@@ -71,7 +84,7 @@ The first is to specify the schema directly in the policy configuration, like th
   </Properties>
 
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.1.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -86,7 +99,7 @@ has a JSON schema string in it.
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.1.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -108,14 +121,14 @@ file. You can specify the schema file name this way:
     <Property name='schema'>schema1.json</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.1.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
 </JavaCallout>
 ```
 
 This requires that you bundle the schema file into the JAR; in other words, you must recompile the JAR.
 
 
-The named schema must exist in the edge-custom-json-schema-validator-1.0.1.jar.
+The named schema must exist in the edge-custom-json-schema-validator-1.0.2.jar.
 It should be in the resources directory.  The content of the jar
 should look like this:
 
@@ -148,7 +161,7 @@ recognized as a schema file.  The syntax looks like this:
     <Property name='schema'>{context_var_that_contains_name_of_schema_resource}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.1.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -158,7 +171,7 @@ As above, this also requires that you bundle the referenced schema file into the
 
 By default, the Java callout will return ExecutionResult.ABORT, and implicitly put the proxy flow into a Fault state, when:
 
-* the configuration of the policy is incorrect. For example, if there is no schema property present.
+* the configuration of the policy is incorrect. For example, if there is no schema property present, or if the thing specified for a schema is invalid (not a real schema, or has a typo, etc).
 * the schema validation fails.
 
 You can suppress the faults by using a property in the configuration, like this:
@@ -170,7 +183,7 @@ You can suppress the faults by using a property in the configuration, like this:
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.1.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -191,7 +204,55 @@ Build the project with maven.  Like so:
   mvn clean package
 ```
 
+## Dependencies
+
+At runtime, there are various JAR dependencies.  All of these must be in the resources/java folder of your PAI Proxy, or must be available as resources in the environment or organziation.
+
+json-schema-validator-2.2.10.jar
+json-schema-core-1.2.10.jar
+jackson-annotations-2.9.5.jar
+jackson-databind-2.9.5.jar
+jackson-core-2.9.5.jar
+jackson-coreutils-1.9.jar
+libphonenumber-8.0.0.jar
+uri-template-0.9.jar
+msg-simple-1.1.jar
+guava-26.0-jre.jar
+
+## The Example Proxy Bundle
+
+There is an example proxy bundle [included here](./bundle) .
+To use it, import and deploy it into an org/env.
+
+Then, demonstrate the success case:
+
+
+```
+ORG=myorg
+ENV=myenv
+curl -i https://$ORG-$ENV.apigee.net/jsvexample/t1 -H content-type:application/json -d '{
+  "shipping_address": {
+    "street_address": "1600 Pennsylvania Avenue NW",
+    "city": "Washington",
+    "state": "DC",
+    "type": "business"
+  }
+}'
+```
+
+Now the failure case (missing the address type):
+```
+curl -i https://$ORG-$ENV.apigee.net/jsvexample/t1 -H content-type:application/json -d '{
+  "shipping_address": {
+    "street_address": "1600 Pennsylvania Avenue NW",
+    "city": "Washington",
+    "state": "DC"
+  }
+}'
+```
+
+
 ## Bugs
 
-There is no example proxy bundle.
+none?
 
