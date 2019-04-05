@@ -36,5 +36,5 @@
     </Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>

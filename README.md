@@ -34,7 +34,7 @@ request flow, it reads the JSON payload from the request content. When
 applied on the response flow, the policy reads the JSON payload from the
 response content.
 
-There is just one configuration parameter: the schema. There are several options:
+There is one key configuration parameter: the schema. There are several options:
 
 - inline in the policy
 - as a variable holding a schema as a string
@@ -84,7 +84,7 @@ The first is to specify the schema directly in the policy configuration, like th
   </Properties>
 
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -99,7 +99,7 @@ has a JSON schema string in it.
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -121,14 +121,14 @@ file. You can specify the schema file name this way:
     <Property name='schema'>schema1.json</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>
 ```
 
 This requires that you bundle the schema file into the JAR; in other words, you must recompile the JAR.
 
 
-The named schema must exist in the edge-custom-json-schema-validator-1.0.2.jar.
+The named schema must exist in the edge-custom-json-schema-validator-1.0.3.jar.
 It should be in the resources directory.  The content of the jar
 should look like this:
 
@@ -161,7 +161,7 @@ recognized as a schema file.  The syntax looks like this:
     <Property name='schema'>{context_var_that_contains_name_of_schema_resource}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -183,7 +183,7 @@ You can suppress the faults by using a property in the configuration, like this:
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.2.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -206,18 +206,8 @@ Build the project with maven.  Like so:
 
 ## Dependencies
 
-At runtime, there are various JAR dependencies.  All of these must be in the resources/java folder of your PAI Proxy, or must be available as resources in the environment or organziation.
+At runtime, there are various JAR dependencies.  All of these must be in the resources/java folder of your API Proxy, or must be available as resources in the environment or organization. Check the pom file for the list, or run `mvn dependency:tree`.
 
-json-schema-validator-2.2.10.jar
-json-schema-core-1.2.10.jar
-jackson-annotations-2.9.5.jar
-jackson-databind-2.9.5.jar
-jackson-core-2.9.5.jar
-jackson-coreutils-1.9.jar
-libphonenumber-8.0.0.jar
-uri-template-0.9.jar
-msg-simple-1.1.jar
-guava-26.0-jre.jar
 
 ## The Example Proxy Bundle
 

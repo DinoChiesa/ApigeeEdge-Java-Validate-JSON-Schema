@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.google.apigee.callout</groupId>
   <artifactId>edge-custom-json-schema-validator</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <name>EdgeCustomJsonSchemaValidator</name>
   <url>http://maven.apache.org</url>
   <packaging>jar</packaging>
@@ -14,10 +14,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
     <jsv.version>2.2.10</jsv.version>
-    <guava.version>26.0-jre</guava.version>
     <testng.version>6.8.7</testng.version> <!-- current: 6.9.4 -->
     <jmockit.version>1.7</jmockit.version>
-    <jackson.version>2.9.5</jackson.version>
+    <jackson.version>2.9.8</jackson.version>
     <apiproxy.java.rsrc.dir>../bundle/apiproxy/resources/java</apiproxy.java.rsrc.dir>
   </properties>
 
@@ -78,7 +77,6 @@ mvn install:install-file \
       <version>${jackson.version}</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.github.java-json-tools/json-schema-validator -->
     <dependency>
       <groupId>com.github.java-json-tools</groupId>
       <artifactId>json-schema-validator</artifactId>
@@ -98,13 +96,6 @@ mvn install:install-file \
       <version>${jmockit.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -122,6 +113,7 @@ mvn install:install-file \
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <includeScope>runtime</includeScope>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
@@ -133,7 +125,7 @@ mvn install:install-file \
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -143,7 +135,7 @@ mvn install:install-file \
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.1.1</version>
         <configuration>
           <archive>
             <!-- do not include the pom.xml file in the generated jar -->
@@ -161,22 +153,15 @@ mvn install:install-file \
               <tasks>
                 <copy todir="${apiproxy.java.rsrc.dir}">
                   <fileset dir="${project.build.directory}">
-                    <include name="${project.artifactId}-${project.version}.jar"/>
-
                     <!-- copy any required dependencies that are not
                          already included in the Edge runtime: -->
-                    <include name="lib/json-schema-validator-${jsv.version}.jar"/>
-                    <include name="lib/json-schema-core-1.2.10.jar"/>
-
-                    <include name="lib/jackson-annotations-${jackson.version}.jar"/>
-                    <include name="lib/jackson-databind-${jackson.version}.jar"/>
-                    <include name="lib/jackson-core-${jackson.version}.jar"/>
-                    <include name="lib/jackson-coreutils-1.9.jar"/>
-                    <include name="lib/libphonenumber-8.0.0.jar"/>
-                    <include name="lib/guava-${guava.version}.jar"/>
-                    <include name="lib/uri-template-0.9.jar"/>
-                    <include name="lib/msg-simple-1.1.jar"/>
-                    <!--                    -->
+                    <include name="${project.build.finalName}.jar"/>
+                    <!-- copy any required dependencies that are not
+                    already included in the Edge runtime:
+                    -->
+                    <include name="lib/*.jar"/>
+                    <exclude name="lib/message-flow-1.0.0.jar"/>
+                    <exclude name="lib/expressions-1.0.0.jar"/>
 
                   </fileset>
                   <mapper type="flatten"/>
@@ -185,6 +170,42 @@ mvn install:install-file \
             </configuration>
             <goals>
               <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M2</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0.5</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>display-dependency-updates</goal>
+              <goal>display-plugin-updates</goal>
             </goals>
           </execution>
         </executions>
