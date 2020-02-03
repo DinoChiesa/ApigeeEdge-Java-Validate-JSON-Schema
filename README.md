@@ -9,9 +9,12 @@ Schema](https://spacetelescope.github.io/understanding-json-schema/structuring.h
 This Java callout relies on [the json-schema-validator library v2.2.10 from
 com.github.fge](https://github.com/daveclayton/json-schema-validator).
 
-You do not need to compile the Java code in order to use this callout. It's
-ready for you to use, as is. However, if you wish to modify and recompile the
-code, for whatever reason, you can do so.
+You must compile the Java code in order to use this callout. See below in the
+"Building" section for how to do it.
+
+>  Not really. But it's the easiest way.  Running the build downloads all the
+>  dependency jars, and allows you to ensure you have them correct.
+
 
 ## Disclaimer
 
@@ -84,7 +87,7 @@ The first is to specify the schema directly in the policy configuration, like th
   </Properties>
 
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-20200203.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -99,7 +102,7 @@ has a JSON schema string in it.
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-20200203.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -121,14 +124,14 @@ file. You can specify the schema file name this way:
     <Property name='schema'>schema1.json</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-20200203.jar</ResourceURL>
 </JavaCallout>
 ```
 
 This requires that you bundle the schema file into the JAR; in other words, you must recompile the JAR.
 
 
-The named schema must exist in the edge-custom-json-schema-validator-1.0.3.jar.
+The named schema must exist in the edge-custom-json-schema-validator-20200203.jar.
 It should be in the resources directory.  The content of the jar
 should look like this:
 
@@ -161,7 +164,7 @@ recognized as a schema file.  The syntax looks like this:
     <Property name='schema'>{context_var_that_contains_name_of_schema_resource}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-20200203.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -183,7 +186,7 @@ You can suppress the faults by using a property in the configuration, like this:
     <Property name='schema'>{context-var-that-holds-schema}</Property>
   </Properties>
   <ClassName>com.google.apigee.edgecallouts.jsonschema.ValidatorCallout</ClassName>
-  <ResourceURL>java://edge-custom-json-schema-validator-1.0.3.jar</ResourceURL>
+  <ResourceURL>java://edge-custom-json-schema-validator-20200203.jar</ResourceURL>
 </JavaCallout>
 ```
 
@@ -198,7 +201,7 @@ Whether or not the policy throws a fault, the policy sets these variables:
 
 ## Building
 
-Build the project with maven.  Like so:
+Build the project with [maven](https://maven.apache.org/).  Like so:
 
 ```
   mvn clean package

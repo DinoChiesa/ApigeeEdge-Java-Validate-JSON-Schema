@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.google.apigee.callout</groupId>
   <artifactId>edge-custom-json-schema-validator</artifactId>
-  <version>1.0.3</version>
+  <version>20200203</version>
   <name>EdgeCustomJsonSchemaValidator</name>
   <url>http://maven.apache.org</url>
   <packaging>jar</packaging>
@@ -16,7 +16,7 @@
     <jsv.version>2.2.10</jsv.version>
     <testng.version>6.8.7</testng.version> <!-- current: 6.9.4 -->
     <jmockit.version>1.7</jmockit.version>
-    <jackson.version>2.9.8</jackson.version>
+    <jackson.version>[2.9.10.1,)</jackson.version>
     <apiproxy.java.rsrc.dir>../bundle/apiproxy/resources/java</apiproxy.java.rsrc.dir>
   </properties>
 
