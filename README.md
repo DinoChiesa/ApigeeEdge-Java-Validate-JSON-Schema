@@ -201,7 +201,11 @@ Whether or not the policy throws a fault, the policy sets these variables:
 
 ## Building
 
-Build the project with [maven](https://maven.apache.org/).  Like so:
+Building this project requires:
+* Java 8 (for MacOS, I recommend visiting [AdoptOpenJDK](https://adoptopenjdk.net/))
+* [Apache maven](https://maven.apache.org/), at least v3.5.
+
+Build the project like so:
 
 ```
   mvn clean package
@@ -209,8 +213,10 @@ Build the project with [maven](https://maven.apache.org/).  Like so:
 
 ## Dependencies
 
-At runtime, there are various JAR dependencies.  All of these must be in the resources/java folder of your API Proxy, or must be available as resources in the environment or organization. Check the pom file for the list, or run `mvn dependency:tree`.
-
+At runtime, there are various JAR dependencies.  All of these must be in the
+resources/java folder of your API Proxy, or must be available as resources in
+the environment or organization. Check the pom file for the list, or run `mvn
+dependency:tree`.
 
 ## The Example Proxy Bundle
 
@@ -248,4 +254,3 @@ curl -i https://$ORG-$ENV.apigee.net/jsvexample/t1 -H content-type:application/j
 ## Bugs
 
 none?
-
